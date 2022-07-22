@@ -1,5 +1,6 @@
 import 'package:booksearch/models/search_list.dart';
 import 'package:booksearch/providers/books.dart';
+import 'package:booksearch/screens/dashboard.dart';
 import 'package:booksearch/services/bloc/homepage_bloc.dart';
 import 'package:booksearch/services/utils.dart';
 import 'package:booksearch/widgets/network_sensititve.dart';
@@ -185,9 +186,15 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             )
           ],
-          title: Text(
-            'BOOKS',
-            style: TextStyle(fontSize: 18),
+          title: InkWell(
+             onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, DashBoardScreen.routeName);
+              },
+            child: Text(
+              'BOOKS',
+              style: TextStyle(fontSize: 18),
+            ),
           )),
       body: Column(
         children: <Widget>[

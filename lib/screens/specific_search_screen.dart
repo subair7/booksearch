@@ -1,4 +1,5 @@
 import 'package:booksearch/providers/books.dart';
+import 'package:booksearch/screens/dashboard.dart';
 import 'package:booksearch/screens/search_screen.dart';
 import 'package:booksearch/services/connectivity_status.dart';
 import 'package:booksearch/widgets/books_grid.dart';
@@ -42,9 +43,15 @@ class _SpecificSearchScreenState extends State<SpecificSearchScreen> {
             Icons.menu_book,
             color: Colors.white,
           ),
-          title: Text(
-            'BOOKS',
-            style: TextStyle(fontSize: 18),
+          title: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, DashBoardScreen.routeName);
+            },
+            child: Text(
+              'BOOKS',
+              style: TextStyle(fontSize: 18),
+            ),
           )),
       body: Scaffold(
         appBar: AppBar(

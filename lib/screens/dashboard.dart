@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:booksearch/models/booklist.dart';
 import 'package:booksearch/models/search_list.dart';
 import 'package:booksearch/providers/categories.dart';
+import 'package:booksearch/screens/search_screen.dart';
 import 'package:booksearch/screens/specific_search_screen.dart';
 import 'package:booksearch/services/bloc/homepage_bloc.dart';
 import 'package:booksearch/services/utils.dart';
@@ -29,11 +30,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     super.didChangeDependencies();
     Future.delayed(Duration.zero).then((_) {
       homePageBloc.fetchBooks('a');
-      homePageBloc.buildUrl('','sports',2);
+      homePageBloc.buildUrl('', 'sports', 2);
     });
   }
-
-  //// list of chips
 
   LinkedHashMap<String, String> map1 = LinkedHashMap<String, String>();
   LinkedHashMap<String, String> map2 = LinkedHashMap<String, String>();
@@ -76,7 +75,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     final categories = Provider.of<Categories>(context);
     int page = 1;
     return Scaffold(
-      
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
             // automaticallyImplyLeading: false,
@@ -86,14 +84,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               Icons.menu_book,
               color: Colors.white,
             ),
-            title: Text(
-              'BOOKS',
-              style: TextStyle(fontSize: 18),
+            actions: [
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, SearchScreen.routeName);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+            title: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, DashBoardScreen.routeName);
+              },
+              child: Text(
+                'BOOKS',
+                style: TextStyle(fontSize: 18),
+              ),
             )),
         ////////////*BODY////////////////////////////
         body: Scaffold(
           backgroundColor: Colors.white,
-
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -158,38 +175,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           ),
                         );
                       }),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     mainAxisSize: MainAxisSize.min,
-                  //     children: List.generate(
-                  //         categories.categoriesList.length,
-                  //         (index) => Padding(
-                  //               padding: const EdgeInsets.all(8.0),
-                  //               child: Column(
-                  //                 children: [
-                  //                   Container(
-                  //                     height: 60,
-                  //                     width: 120,
-                  //                     decoration: BoxDecoration(
-                  //                         color: CommonColor
-                  //                             .VENUE_SEARCH_SCREE_BACKGROUND_COLOR,
-                  //                         borderRadius: BorderRadius.all(
-                  //                             Radius.circular(4))),
-                  //                     child: Center(
-                  //                       child: Text(
-                  //                           categories.categoriesList[index]
-                  //                                   .categoryTitle ??
-                  //                               'Other',
-                  //                           textAlign: TextAlign.center),
-                  //                     ),
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             )),
-                  //   ),
-                  // ),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 16),
@@ -465,170 +450,189 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     ),
                   ),
                   StreamBuilder<List<Item>>(
-              stream: homePageBloc.getSearchList,
-              builder: (context, snapshot) {
-                // if (!snapshot.hasError) {
-                //   return Text('No Books Available');
-                // }
-                if (!snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ShimmerWidget.rectangular(
-                            height: 80,
-                            width: MediaQuery.of(context).size.width - 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ShimmerWidget.rectangular(
-                            height: 80,
-                            width: MediaQuery.of(context).size.width - 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return Container(
-                  // color:
-                  //     CommonColor.VENUE_SEARCH_SCREE_BACKGROUND_COLOR,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length>6?6:snapshot.data!.length,
-                      itemBuilder: (context, i) {
-                        return Card(
-                          borderOnForeground: false,
-                          color:
-                              CommonColor.VENUE_SEARCH_SCREE_BACKGROUND_COLOR,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  height: 80,
-                                  width: 60,
-                                  child: Card(
-                                    color: Colors.grey[100],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                    ),
-                                    elevation: 4.0,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8)),
-                                      child: FadeInImage.memoryNetwork(
-                                        image: snapshot.data![i].volumeInfo!
-                                                .imageLinks!.thumbnail ??
-                                            '',
-                                        fit: BoxFit.cover,
-                                        placeholder: kTransparentImage,
-                                      ),
-                                    ),
+                      stream: homePageBloc.getSearchList,
+                      builder: (context, snapshot) {
+                        // if (!snapshot.hasError) {
+                        //   return Text('No Books Available');
+                        // }
+                        if (!snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ShimmerWidget.rectangular(
+                                    height: 80,
+                                    width:
+                                        MediaQuery.of(context).size.width - 16,
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              if (snapshot.data![i].volumeInfo!.title != null)
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ShimmerWidget.rectangular(
+                                    height: 80,
+                                    width:
+                                        MediaQuery.of(context).size.width - 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return Container(
+                          // color:
+                          //     CommonColor.VENUE_SEARCH_SCREE_BACKGROUND_COLOR,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 8.0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.length > 6
+                                  ? 6
+                                  : snapshot.data!.length,
+                              itemBuilder: (context, i) {
+                                return Card(
+                                  borderOnForeground: false,
+                                  color: CommonColor
+                                      .VENUE_SEARCH_SCREE_BACKGROUND_COLOR,
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        Utils.trimString(
-                                            snapshot.data![i].volumeInfo!
-                                                    .title ??
-                                                'Book',
-                                            60),
-                                        textAlign: TextAlign.left,
-                                        maxLines: 2,
-                                        style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                      if (snapshot.data![i].volumeInfo !=
-                                          null)
-                                        Text(
-                                          Utils.trimString(
-                                              snapshot.data![i].volumeInfo!
-                                                      .authors
-                                                      ?.join(',') ??
-                                                  'Author',
-                                              60),
-                                          textAlign: TextAlign.left,
-                                          maxLines: 2,
-                                          style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  fontSize: 12.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                      if (snapshot.data![i].volumeInfo !=
-                                          null)
-                                        Text(
-                                          Utils.trimString(
-                                              snapshot.data![i].volumeInfo!
-                                                      .categories
-                                                      ?.join(',') ??
-                                                  'Author',
-                                              60),
-                                          textAlign: TextAlign.left,
-                                          maxLines: 2,
-                                          style: GoogleFonts.montserrat(
-                                              textStyle: TextStyle(
-                                                  fontSize: 10.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                      Text(
-                                        'Pages ' +
-                                            Utils.trimString(
-                                                snapshot.data![i].volumeInfo!
-                                                        .pageCount
-                                                        .toString() ??
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: SizedBox(
+                                          height: 80,
+                                          width: 60,
+                                          child: Card(
+                                            color: Colors.grey[100],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8),
+                                              ),
+                                            ),
+                                            elevation: 4.0,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8)),
+                                              child: FadeInImage.memoryNetwork(
+                                                image: snapshot
+                                                        .data![i]
+                                                        .volumeInfo!
+                                                        .imageLinks!
+                                                        .thumbnail ??
                                                     '',
-                                                60),
-                                        textAlign: TextAlign.left,
-                                        maxLines: 2,
-                                        style: GoogleFonts.montserrat(
-                                            textStyle: TextStyle(
-                                                fontSize: 8.0,
-                                                fontWeight:
-                                                    FontWeight.normal)),
+                                                fit: BoxFit.cover,
+                                                placeholder: kTransparentImage,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      if (snapshot.data![i].volumeInfo!.title !=
+                                          null)
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                Utils.trimString(
+                                                    snapshot
+                                                            .data![i]
+                                                            .volumeInfo!
+                                                            .title ??
+                                                        'Book',
+                                                    60),
+                                                textAlign: TextAlign.left,
+                                                maxLines: 2,
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 14.0,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                              ),
+                                              if (snapshot
+                                                      .data![i].volumeInfo !=
+                                                  null)
+                                                Text(
+                                                  Utils.trimString(
+                                                      snapshot
+                                                              .data![i]
+                                                              .volumeInfo!
+                                                              .authors
+                                                              ?.join(',') ??
+                                                          'Author',
+                                                      60),
+                                                  textAlign: TextAlign.left,
+                                                  maxLines: 2,
+                                                  style: GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 12.0,
+                                                          fontWeight: FontWeight
+                                                              .normal)),
+                                                ),
+                                              if (snapshot
+                                                      .data![i].volumeInfo !=
+                                                  null)
+                                                Text(
+                                                  Utils.trimString(
+                                                      snapshot
+                                                              .data![i]
+                                                              .volumeInfo!
+                                                              .categories
+                                                              ?.join(',') ??
+                                                          'Author',
+                                                      60),
+                                                  textAlign: TextAlign.left,
+                                                  maxLines: 2,
+                                                  style: GoogleFonts.montserrat(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 10.0,
+                                                          fontWeight: FontWeight
+                                                              .normal)),
+                                                ),
+                                              Text(
+                                                'Pages ' +
+                                                    Utils.trimString(
+                                                        snapshot
+                                                                .data![i]
+                                                                .volumeInfo!
+                                                                .pageCount
+                                                                .toString() ??
+                                                            '',
+                                                        60),
+                                                textAlign: TextAlign.left,
+                                                maxLines: 2,
+                                                style: GoogleFonts.montserrat(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 8.0,
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   ),
-                                ),
-                            ],
-                          ),
-                        ); // BookOverviewItem(
-                        //     snapshot.data!.items![i].id??'');
-                      }),
-                );
+                                ); // BookOverviewItem(
+                                //     snapshot.data!.items![i].id??'');
+                              }),
+                        );
 
-                //  Text(snapshot!.data!.items!.first.volumeInfo!
-                //         .categories!.first ??
-                //     '');
-              }),
-             ],
+                        //  Text(snapshot!.data!.items!.first.volumeInfo!
+                        //         .categories!.first ??
+                        //     '');
+                      }),
+                ],
               ),
             ),
           ),

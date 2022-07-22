@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+Bloc , RxDart , Provider - Consumer
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
